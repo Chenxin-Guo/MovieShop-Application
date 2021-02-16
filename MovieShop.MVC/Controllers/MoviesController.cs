@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MovieShop.Infrastructure.Services;
+using MovieShop.Core.ServiceInterfaces;
 
 namespace MovieShop.MVC.Controllers
 {
@@ -10,11 +12,18 @@ namespace MovieShop.MVC.Controllers
     {
         // https://localhost:44363/Movies/Index, we usually delete controller from the class name
         // https://localhost:44363/movies/Index
+        private readonly IMovieService _movieService;
+        public MoviesController(IMovieService movieService)
+        {
+            _movieService = movieService;
+        }
+
         [HttpGet]
         public IActionResult Index()
         {
             return View();
         }
+        
 
         [HttpGet]
         public IActionResult Details()
@@ -26,7 +35,8 @@ namespace MovieShop.MVC.Controllers
         [HttpGet]
         public IActionResult TopRevenueMovies()
         {
-            return View();
+            var movies = _movieService.GetHighestGrossingMovies();
+            return View(movies);    
         }
 
         [HttpGet]

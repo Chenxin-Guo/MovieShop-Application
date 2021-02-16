@@ -8,6 +8,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MovieShop.Core.RepositoryInterfaces;
+using MovieShop.Core.ServiceInterfaces;
+using MovieShop.Infrastructure.Repositories;
+using MovieShop.Infrastructure.Services;
+using MovieShop.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace MovieShop.MVC
 {
@@ -25,6 +31,15 @@ namespace MovieShop.MVC
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            // registering our Classes for interfaced to be used across our applicattion
+            //.NET Core has build-in DI
+            // old verse of >net Framwork did not had build-in DI, we had to download 3rd party package or IOC,like Ninject, Autofac
+            //
+            //
+            services.AddTransient<IMovieRepository, MovieRepository>();
+            services.AddTransient<IMovieService, MovieService>();
+            services.AddDbContext<MovieShopDbContext>(option =>
+                option.UseSqlServer(Configuration.GetConnectionString("MovieShopDbConnection")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,7 +58,7 @@ namespace MovieShop.MVC
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            app.UseRouting();
+            app.UseRouting(); // order is important, is sth is missing, the request might break. 
 
             app.UseAuthorization();
 
